@@ -3,3 +3,6 @@
  * YouTube: https://youtube.com/@trungquandev
  * "A bit of fragrance clings to the hand that gives flowers!"
  */
+
+const MONGODB_URI = 'mongodb+srv://sa:sa@cluster0.3nae9.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'
+const DATABASE_NAME = 'trello-db'
