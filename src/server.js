@@ -7,22 +7,18 @@
 import express from 'express'
 import exitHook from 'async-exit-hook'
 import { CONNECT_DB, CLOSE_DB } from './config/mongodb'
-import { env } from '~/config/environment'
+import { env } from './config/environment'
+import { APIs_V1 } from './routes/v1'
 
 const START_SERVER = () => {
   const app = express()
 
-  const hostname = 'localhost'
-  const port = 8017
 
-  app.get('/', (req, res) => {
-
-    res.end('<h1>Hello World!</h1><hr>')
-  })
+  app.use('/v1', APIs_V1)
 
   app.listen(env.APP_PORT, env.APP_HOST, () => {
     // eslint-disable-next-line no-console
-    console.log(`3. Hello ${env.AUTHOR}, Backend Server is running successfully at Host: ${hostname} and Port:
+    console.log(`3. Hello ${env.AUTHOR}, Backend Server is running successfully at Host: ${env.APP_HOST} and Port:
      ${env.APP_PORT}`)
   })
 
@@ -41,7 +37,8 @@ const START_SERVER = () => {
     console.log('2. Connected to MongoDB Cloud Atlas...')
 
     //Khởi động Server Back-end sau khi đã Connect-Database thành công
-    START_SERVER()
+     START_SERVER()
+
   } catch (error) {
     console.error(error)
     process.exit(0)
