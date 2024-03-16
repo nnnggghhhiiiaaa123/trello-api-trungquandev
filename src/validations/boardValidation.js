@@ -5,22 +5,32 @@
  */
 import Joi from 'joi'
 import { StatusCodes } from 'http-status-codes'
+import ApiError from '../utils/ApiError'
 
 const createNew = async (req, res, next) => {
     const correctCondition = Joi.object({
-        title: Joi.string().required().min(3).max(50).trim().strict(),
+        title: Joi.string().required().min(3).max(50).trim().strict().messages({
+            'any.required': 'Title is required (nghiadev)',
+            'string.empty': 'Title is not allowed to be empty (nghiadev)',
+            'string.min': 'Title min 3 chars (nghiadev)',
+            'string.max': 'Title max 50 chars (nghiadev)',
+            'string.trim': 'Title must not have leading or trailing whitespace'
+
+        }),
         description: Joi.string().required().min(3).max(256).trim().strict()
     })
 
     try {
         console.log('req.body: ', req.body)
 
-        await correctCondition.validateAsync(req.body)
-        //next()
-        res.status(StatusCodes.CREATED).json({ message: 'POST from Validation: API create new board' })
-
+        await correctCondition.validateAsync(req.body, { abortEarly: false })
+        // validate dữ liệu xong xuôi hợp lệ thì cho request đi tiếp sang Controller
+        next()
     } catch (error) {
-        console.log(error)
+        // const errorMessage = new Error(error).message
+        // const customError = new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, errorMessage)
+        next(new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, new Error(error).message))
+
         res.status(StatusCodes.UNPROCESSABLE_ENTITY).json({
             errors: new Error(error).message
         })
